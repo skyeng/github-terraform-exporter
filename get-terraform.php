@@ -2,8 +2,8 @@
 <?php
 require 'vendor/autoload.php';
 
-$token='';
-$org="TrullyLollipop";
+$token = '';
+$org = "TrullyLollipop";
 
 $client = new \Github\Client();
 $client->authenticate($token, null, Github\Client::AUTH_HTTP_TOKEN);
@@ -13,22 +13,24 @@ $repos = $client->repositories()->org(
     ['limit' => 20000]
 );
 
-var_export($repos);
-
-//require_once 'templates/repos.php';
-
-/*
-$users = [];
-$page = 0;
-var_export($client->repositories()->collaborators()->all($org, 'project-alpha'));
-
-*/
-
+$collaborators_in_repo = array();
 $teams_in_repo = array();
-$users_in_teams = array();
+$members_in_team = array();
 
 foreach ($repos as $repo) {
-    $teams_in_repo[$repo['name']]['teams'] = $client->repository()->teams($org, $repo['name']);
+    $teams_in_repo[$repo['name']] = $client->repository()->teams($org, $repo['name']);
+    $collaborators_in_repo[$repo['name']] = $client->repositories()->collaborators()->all($org,$repo['name']);
 }
 
-var_export($teams_in_repo);
+foreach ($teams_in_repo as $key=>$value){
+    foreach ($value as $team){
+        $members_in_team[$team['slug']] = $client->team()->members($team['name'])->all($org);
+    }
+}
+
+$client->teams()->members('SomeTeam');
+
+require_once 'templates/repos.php';
+require_once 'templates/teams.php';
+require_once 'templates/repo-collaborators.php';
+
