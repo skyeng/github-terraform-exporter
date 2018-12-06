@@ -16,6 +16,7 @@ $repos = $client->repositories()->org(
 $collaborators_in_repo = array();
 $teams_in_repo = array();
 $members_in_team = array();
+$member_role_in_team = array();
 
 foreach ($repos as $repo) {
     $teams_in_repo[$repo['name']] = $client->repository()->teams($org, $repo['name']);
@@ -24,13 +25,27 @@ foreach ($repos as $repo) {
 
 foreach ($teams_in_repo as $key=>$value){
     foreach ($value as $team){
-        $members_in_team[$team['slug']] = $client->team()->members($team['name'])->all($org);
+//get all members in a team
+        $members_in_team[$team['slug']] = $client->organization()->teams()->members($team['id']);
+    }
+}
+//get member team role (member or maintainer)
+
+foreach ($teams_in_repo as $key=>$value) {
+    foreach ($value as $team) {
+        foreach ($members_in_team as $k => $v) {
+            foreach ($v as $member) {
+                if ($member['login'] != null) {
+                    $member_role_in_team[$team['slug']] = $client->organization()->teams()->check($team['id'], $member['login']);
+                }
+            }
+        }
     }
 }
 
-$client->teams()->members('SomeTeam');
+//require_once 'templates/repos.php';
+//require_once 'templates/teams.php';
+//require_once 'templates/repo-collaborators.php';
+//require_once 'templates/team-members.php';
 
-require_once 'templates/repos.php';
-require_once 'templates/teams.php';
-require_once 'templates/repo-collaborators.php';
-
+//var_dump($client->organization()->teams()->check('3027401', 'slastique'));

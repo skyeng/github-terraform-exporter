@@ -10,7 +10,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/knplabs/github-api" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/cache-plugin" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/client-common" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/curl-client" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/discovery" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/guzzle6-adapter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/httplug" />
@@ -19,6 +18,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/promise" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/ralouphie/getallheaders" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/options-resolver" />
     </content>
     <orderEntry type="inheritedJdk" />

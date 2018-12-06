@@ -1,6 +1,6 @@
 <?php
 foreach ($teams_in_repo as $key => $value) { ?>
-    <?php foreach ($v as $team) { ?>
+    <?php foreach ($value as $team) { ?>
     resource "github_teams" "<?= $team['slug'] ?>" {
         name               = "<?= $team['name'] ?>"
         description        = "<?= $team['description'] ?>"
@@ -9,7 +9,7 @@ foreach ($teams_in_repo as $key => $value) { ?>
 
     resource "github_team_repository" "<?= $team['slug']."_".$k ?>" {
         team_id    = "${github_team.<?= $team['slug'] ?>.id}"
-        repository = "${github_repository.<?= $k ?>.name}"
+        repository = "${github_repository.<?= $key ?>.name}"
         permission = "push"
     }
 
