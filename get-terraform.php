@@ -20,23 +20,26 @@ $member_role_in_team = array();
 
 foreach ($repos as $repo) {
     $teams_in_repo[$repo['name']] = $client->repository()->teams($org, $repo['name']);
-    $collaborators_in_repo[$repo['name']] = $client->repositories()->collaborators()->all($org,$repo['name']);
+    $collaborators_in_repo[$repo['name']] = $client->repositories()->collaborators()->all($org, $repo['name']);
 }
 
-foreach ($teams_in_repo as $key=>$value){
-    foreach ($value as $team){
+foreach ($teams_in_repo as $key => $value) {
+    foreach ($value as $team) {
 //get all members in a team
         $members_in_team[$team['slug']] = $client->organization()->teams()->members($team['id']);
     }
 }
 //get member team role (member or maintainer)
 
-foreach ($teams_in_repo as $key=>$value) {
+foreach ($teams_in_repo as $key => $value) {
     foreach ($value as $team) {
         foreach ($members_in_team as $k => $v) {
             foreach ($v as $member) {
                 if ($member['login'] != null) {
-                    $member_role_in_team[$team['slug']] = $client->organization()->teams()->check($team['id'], $member['login']);
+                    $member_role_in_team[$team['slug']] = $client->organization()->teams()->check(
+                        $team['id'],
+                        $member['login']
+                    );
                 }
             }
         }
