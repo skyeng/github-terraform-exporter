@@ -1,17 +1,27 @@
 <?php
 foreach ($teams_in_repo as $key => $value) { ?>
     <?php foreach ($value as $team) { ?>
-    resource "github_teams" "<?= $team['slug'] ?>" {
-        name               = "<?= $team['name'] ?>"
-        description        = "<?= $team['description'] ?>"
-        permissions         = "<?= $team['permission'] ?>"
-    }
+        resource "github_teams" "<?= $team['slug'] ?>" {
+            name               = "<?= $team['name'] ?>"
+            description        = "<?= $team['description'] ?>"
+            permissions        = "<?= $team['permission'] ?>"
+            privacy            = "<?= $team['privacy'] ?>"
+        }
 
-    resource "github_team_repository" "<?= $team['slug']."_".$k ?>" {
-        team_id    = "${github_team.<?= $team['slug'] ?>.id}"
-        repository = "${github_repository.<?= $key ?>.name}"
-        permission = "push"
-    }
+        <!--        nested teams -->
+        resource "github_teams" "<?= $team['slug'] ?>" {
+            name               = "<?= $team['name'] ?>"
+            description        = "<?= $team['description'] ?>"
+            permissions        = "<?= $team['permission'] ?>"
+            parent_team_id     = "<?= $team['parent_team_id'] ?>"
+            privacy            = "<?= $team['privacy'] ?>"
+        }
+
+        resource "github_team_repository" "<?= $team['slug'] . "_" . $k ?>" {
+            team_id    = "${github_team.<?= $team['slug'] ?>.id}"
+            repository = "${github_repository.<?= $key ?>.name}"
+            permission = "push"
+        }
 
     <?php } ?>
 <?php } ?>
