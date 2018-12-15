@@ -21,7 +21,7 @@ $client->authenticate($token, null, Github\Client::AUTH_HTTP_TOKEN);
  * topics (map)
  */
 
-$repos = $client->repositories()->org($org, ['limit' => 300]);
+$repos = $client->repositories()->org($org, ['limit' => 400]);
 
 /**
  * github_membership:
@@ -43,17 +43,16 @@ $org_teams = array();
 $client_preview = new \Github\Client(null, 'hellcat-preview', null);
 $client_preview->authenticate($token, null, Github\Client::AUTH_HTTP_TOKEN);
 $org_teams = $client_preview->organization()->teams()->all($org);
-
 /**
  * github_repository_collaborator
  * repository
  * username
  * permission
  */
-$collaborators_in_repo = array();
-foreach ($repos as $repo) {
-    $collaborators_in_repo[$repo['name']] = $client->repositories()->collaborators()->all($org, $repo['name']);
-}
+//$collaborators_in_repo = array();
+//foreach ($repos as $repo) {
+//    $collaborators_in_repo[$repo['name']] = $client->repositories()->collaborators()->all($org, $repo['name']);
+//}
 
 /**
  * github_team_repository:
@@ -61,6 +60,7 @@ foreach ($repos as $repo) {
  * repository
  * permission [0:[permissions:pull,permissions:push,permissions:admin],1:[]]
  */
+
 $team_repositories = array();
 foreach ($org_teams as $team) {
     foreach ($client->teams()->repositories($team['id']) as $rep) {
@@ -75,15 +75,16 @@ foreach ($org_teams as $team) {
  * username
  * role
  */
-$org_team_membership = array();
-foreach ($org_user_members as $user) {
-    foreach ($org_teams as $team) {
-        $org_team_membership[$team['slug']] = array($user['name'] =>
-            $client->organization()->teams()->check($team['id'], $user['name'])['role']);
-    }
-}
+//$org_team_membership = array();
+//foreach ($org_user_members as $user) {
+//    foreach ($org_teams as $team) {
+//        $org_team_membership[$team['slug']] = array($user['login'] =>
+//            $client->organization()->teams()->check($team['id'], $user['login'])['role']);
+//    }
+//}
 
+//require_once 'templates/org-users.php';
 //require_once 'templates/repos.php';
-//require_once 'templates/teams.php';
+require_once 'templates/teams.php';
 //require_once 'templates/repo-collaborators.php';
 //require_once 'templates/team-members.php';
