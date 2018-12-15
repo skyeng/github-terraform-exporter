@@ -2,7 +2,7 @@
 <?php
 require 'vendor/autoload.php';
 
-$token = '3cf7e79babd9827bb4ee1239a938a72444b5372a';
+$token = '';
 $org = "TrullyLollipop";
 
 $client = new \Github\Client();
@@ -72,6 +72,13 @@ foreach ($org_teams as $team) {
  * username
  * role
  */
+$org_team_membership = array();
+foreach ($org_user_members as $user) {
+    foreach ($org_teams as $team) {
+        $org_team_membership[$team['slug']] = array($user['name'] =>
+            $client->organization()->teams()->check($team['id'], $user['name'])['role']);
+    }
+}
 
 //$members_in_team = array();
 //$member_role_in_team = array();
@@ -103,5 +110,3 @@ foreach ($org_teams as $team) {
 //require_once 'templates/teams.php';
 //require_once 'templates/repo-collaborators.php';
 //require_once 'templates/team-members.php';
-
-//var_dump($client->organization()->teams()->check('3027401', 'slastique'));
