@@ -36,11 +36,14 @@ $org_user_admins = $client->organization()->members()->all($org, null, 'all', 'a
  * name
  * description
  * privacy
- * parent_team_id - how to get this?
+ * parent_team_id
  */
 $org_teams = array();
-$org_teams = $client->organization()->teams()->all($org);
-//TODO: get list of nested teams using $org_teams
+// i need to create a new client object to use different api version as list child teams is an experimental feature
+$client_preview = new \Github\Client(null, 'hellcat-preview', null);
+$client_preview->authenticate($token, null, Github\Client::AUTH_HTTP_TOKEN);
+$org_teams = $client_preview->organization()->teams()->all($org);
+
 /**
  * github_repository_collaborator
  * repository
@@ -79,32 +82,6 @@ foreach ($org_user_members as $user) {
             $client->organization()->teams()->check($team['id'], $user['name'])['role']);
     }
 }
-
-//$members_in_team = array();
-//$member_role_in_team = array();
-//
-//foreach ($teams_in_repo as $key => $value) {
-//    foreach ($value as $team) {
-////get all members in a team
-//        $members_in_team[$team['slug']] = $client->organization()->teams()->members($team['id']);
-//    }
-//}
-////get member team role (member or maintainer)
-//
-//foreach ($teams_in_repo as $key => $value) {
-//    foreach ($value as $team) {
-//        foreach ($members_in_team as $k => $v) {
-//            foreach ($v as $member) {
-//                if ($member['login'] != null) {
-//                    $member_role_in_team[$team['slug']] = $client->organization()->teams()->check(
-//                        $team['id'],
-//                        $member['login']
-//                    );
-//                }
-//            }
-//        }
-//    }
-//}
 
 //require_once 'templates/repos.php';
 //require_once 'templates/teams.php';
