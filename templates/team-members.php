@@ -1,12 +1,11 @@
 <?php
-foreach ($members_in_team as $key => $value) { ?>
-    <?php foreach ($value as $member) { ?>
-    resource "github_team_membership" "<?= $key ?>_membership" {
+foreach ($org_team_membership as $key => $value) {
+    foreach ($value as $member => $role) { ?>
+    resource "github_team_membership" "team_<?= $key ?>_<?= $member ?>_membership" {
         team_id  = "${github_team.<?= $key ?>.id}"
-        username = "<?= $member['name'] ?>"
-        role     = "<?= $member['role'] ?>"
+        username = "<?= $member ?>"
+        role     = "<?= $role ?>"
     }
-
-    <?php } ?>
-<?php } ?>
+    <?php }
+}?>
 

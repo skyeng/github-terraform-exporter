@@ -43,16 +43,17 @@ $org_teams = array();
 $client_preview = new \Github\Client(null, 'hellcat-preview', null);
 $client_preview->authenticate($token, null, Github\Client::AUTH_HTTP_TOKEN);
 $org_teams = $client_preview->organization()->teams()->all($org);
+
 /**
  * github_repository_collaborator
  * repository
  * username
  * permission
  */
-//$collaborators_in_repo = array();
-//foreach ($repos as $repo) {
-//    $collaborators_in_repo[$repo['name']] = $client->repositories()->collaborators()->all($org, $repo['name']);
-//}
+$collaborators_in_repo = array();
+foreach ($repos as $repo) {
+    $collaborators_in_repo[$repo['name']] = $client->repositories()->collaborators()->all($org, $repo['name']);
+}
 
 /**
  * github_team_repository:
@@ -75,16 +76,26 @@ foreach ($org_teams as $team) {
  * username
  * role
  */
-//$org_team_membership = array();
-//foreach ($org_user_members as $user) {
-//    foreach ($org_teams as $team) {
-//        $org_team_membership[$team['slug']] = array($user['login'] =>
-//            $client->organization()->teams()->check($team['id'], $user['login'])['role']);
-//    }
-//}
 
-//require_once 'templates/org-users.php';
-//require_once 'templates/repos.php';
+$org_team_membership = array();
+$org_users = array_merge($org_user_members, $org_user_admins);
+$team_users_and_their_roles = array();
+
+foreach ($org_teams as $team) {
+    foreach ($org_users as $user) {
+        try {
+            $team_users_and_their_roles += array($user['login'] =>
+                $client->organization()->teams()->check($team['id'], $user['login'])['role']);
+        } catch (Exception $exception) {
+            echo $user['login'] . " not in a " . $team['name'] . "\n";
+        }
+    }
+    $org_team_membership[$team['slug']] = $team_users_and_their_roles;
+    $team_users_and_their_roles = array();
+}
+
+require_once 'templates/org-users.php';
+require_once 'templates/repos.php';
 require_once 'templates/teams.php';
-//require_once 'templates/repo-collaborators.php';
-//require_once 'templates/team-members.php';
+require_once 'templates/repo-collaborators.php';
+require_once 'templates/team-members.php';
