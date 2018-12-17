@@ -1,6 +1,8 @@
+<?php echo "============== Teams and team repos resources ============== " ?>
+
 <?php
 foreach ($org_teams as $team) { ?>
-    resource "github_teams" "team_<?= $team['slug'] ?>" {
+    resource "github_team" "team_<?= $team['slug'] ?>" {
     name               = "<?= $team['name'] ?>"
     description        = "<?= $team['description'] ?>"
     permissions        = "<?= $team['permission'] ?>"
@@ -9,6 +11,8 @@ foreach ($org_teams as $team) { ?>
         parent_team_id = "<?= $team['parent']['id'] ?>"
     <?php } ?>
     }
+    <?php echo "team import command is: terraform import github_team.team_" . $team['slug'] . " " .
+        $team['id'] . "\n"; ?>
 <?php } ?>
 <?php foreach ($team_repositories as $team => $value) {
     foreach ($value as $repo => $permissions) { ?>
@@ -18,18 +22,18 @@ foreach ($org_teams as $team) { ?>
         <?php if ($permissions['admin'] === true) { ?>
             permission = "admin"
             }
-            <?php break ?>
+            <?php continue ?>
         <?php } ?>
         <?php if ($permissions['push'] === true) { ?>
             permission = "push"
             }
-            <?php break ?>
+            <?php continue ?>
         <?php } ?>
 
         <?php if (($permissions['push'] === false) && ($permissions['admin'] === false)) { ?>
             permission = "pull"
             }
-            <?php break ?>
+            <?php continue ?>
         <?php } ?>
     <?php } ?>
 <?php } ?>
