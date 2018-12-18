@@ -1,4 +1,4 @@
-<?= "resource github_repository\n" ?>
+<?php echo "============== Repos list ============== " ?>
 
 <?php foreach ($repos as $repo) { ?>
     resource "github_repository" "<?= $repo['name'] ?>" {

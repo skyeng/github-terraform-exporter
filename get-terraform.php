@@ -63,12 +63,15 @@ foreach ($repos as $repo) {
  */
 
 $team_repositories = array();
+$team_repositories_with_permission = array();
 foreach ($org_teams as $team) {
     foreach ($client->teams()->repositories($team['id']) as $rep) {
-        $team_repositories[$team['slug']] = array($rep['name'] => $rep['permissions']);
+        $team_repositories_with_permission += array($rep['name'] => $rep['permissions']);
         echo "terraform import github_team_repository.team_" . $team['slug'] .
             "_repo_" . $rep['name'] . " " . $team['id'] . ":" . $rep['name'] . "\n";
     }
+    $team_repositories[$team['slug']] = $team_repositories_with_permission;
+    $team_repositories_with_permission = array();
 }
 
 /**
@@ -91,7 +94,7 @@ foreach ($org_teams as $team) {
             echo "terraform import github_team_membership." . "team_" .
                 $team['slug'] . "_" . $user['login'] . "_membership " . $team['id'] . ":" . $user['login'] . "\n";
         } catch (\Github\Exception\RuntimeException $exception) {
-            echo $user['login'] . " not in a " . $team['name'] . "\n";
+//            echo $user['login'] . " not in a " . $team['name'] . "\n";
         }
     }
     $org_team_membership[$team['slug']] = $team_users_and_their_roles;
