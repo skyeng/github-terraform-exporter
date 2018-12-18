@@ -3,7 +3,7 @@
 require 'vendor/autoload.php';
 
 $token = '';
-$org = "TrullyLollipop";
+$org = "skyeng";
 
 $client = new \Github\Client();
 $client->authenticate($token, null, Github\Client::AUTH_HTTP_TOKEN);
@@ -21,7 +21,9 @@ $client->authenticate($token, null, Github\Client::AUTH_HTTP_TOKEN);
  * topics (map)
  */
 
-$repos = $client->repositories()->org($org, ['limit' => 400]);
+$paginator  = new Github\ResultPager($client);
+$parameters = array($org);
+$repos    = $paginator->fetchAll($client->api('organization'), 'repositories', $parameters);
 
 /**
  * github_membership:
@@ -29,7 +31,10 @@ $repos = $client->repositories()->org($org, ['limit' => 400]);
  * role - member, admin
  */
 $org_user_members = $client->organization()->members()->all($org, null, 'all', 'member');
-$org_user_admins = $client->organization()->members()->all($org, null, 'all', 'admin');
+$parameters = array($org, null, 'all', 'member');
+$org_user_members = $paginator->fetchAll($client->api('members'), 'all', $parameters);
+$parameters = array($org, null, 'all', 'admin');
+$org_user_admins = $paginator->fetchAll($client->api('members'), 'all', $parameters);
 
 /**
  * github_team:
@@ -42,7 +47,9 @@ $org_teams = array();
 // i need to create a new client object to use different api version as list child teams is an experimental feature
 $client_preview = new \Github\Client(null, 'hellcat-preview', null);
 $client_preview->authenticate($token, null, Github\Client::AUTH_HTTP_TOKEN);
-$org_teams = $client_preview->organization()->teams()->all($org);
+$paginator_preview  = new Github\ResultPager($client_preview);
+$parameters = array($org);
+$org_teams = $paginator_preview->fetchAll($client_preview->api('teams'), 'all', $parameters);
 
 /**
  * github_repository_collaborator
@@ -86,6 +93,7 @@ $org_team_membership = array();
 $org_users = array_merge($org_user_members, $org_user_admins);
 $team_users_and_their_roles = array();
 
+//TODO: переделать этот кусок. Он слишком часто обращается к api и выжигает все лимиты. Это стало проблемой после перехода на паджинацию
 foreach ($org_teams as $team) {
     foreach ($org_users as $user) {
         try {
