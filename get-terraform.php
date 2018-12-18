@@ -66,8 +66,8 @@ $team_repositories = array();
 foreach ($org_teams as $team) {
     foreach ($client->teams()->repositories($team['id']) as $rep) {
         $team_repositories[$team['slug']] = array($rep['name'] => $rep['permissions']);
-        echo "team repository import command is: terraform import github_team_repository.team_" . $team['slug'] .
-            "_repo " . $team['id'] . ":" . $repo['name'] . "\n";
+        echo "terraform import github_team_repository.team_" . $team['slug'] .
+            "_repo_" . $rep['name'] . " " . $team['id'] . ":" . $rep['name'] . "\n";
     }
 }
 
@@ -88,14 +88,40 @@ foreach ($org_teams as $team) {
         try {
             $team_users_and_their_roles += array($user['login'] =>
                 $client->organization()->teams()->check($team['id'], $user['login'])['role']);
+            echo "terraform import github_team_membership." . "team_" .
+                $team['slug'] . "_" . $user['login'] . "_membership " . $team['id'] . ":" . $user['login'] . "\n";
         } catch (\Github\Exception\RuntimeException $exception) {
             echo $user['login'] . " not in a " . $team['name'] . "\n";
         }
-        echo "team_membership import command is: terraform import github_team_membership." . "team_" .
-            $team['slug'] . "_" . $user['login'] . "_membership " . $team['id'] . ":" . $user['login'] . "\n";
     }
     $org_team_membership[$team['slug']] = $team_users_and_their_roles;
     $team_users_and_their_roles = array();
+}
+foreach ($org_teams as $team) {
+    echo "terraform import github_team.team_" . $team['slug'] . " " .
+        $team['id'] . "\n";
+}
+
+foreach ($repos as $repo) {
+    echo "terraform import github_repository." . $repo['name'] . " " .
+        $repo['name'] . "\n";
+}
+
+foreach ($collaborators_in_repo as $repo => $value) {
+    foreach ($value as $collaborator) {
+        echo "terraform import github_repository_collaborator." . $repo . "_" .
+            $collaborator['login'] . "_collaborator " . $repo . ":" . $collaborator['login'] . "\n";
+    }
+}
+
+foreach ($org_user_admins as $admin) {
+    echo "terraform import github_membership.membership_for_" . $admin['login'] . " " .
+        $org . ":" . $admin['login'] . "\n";
+}
+
+foreach ($org_user_members as $user) {
+    echo "terraform import github_membership.membership_for_" . $user['login'] . " " .
+        $org . ":" . $user['login'] . "\n";
 }
 
 require_once 'templates/repos.php';

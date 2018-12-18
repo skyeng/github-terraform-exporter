@@ -22,8 +22,6 @@ foreach ($collaborators_in_repo as $repo => $value) { ?>
             <?php continue ?>
         <?php } ?>
     }
-        <?php echo "collaborator import command is: terraform import github_repository_collaborator." . $repo . "_" .
-            $collaborator['login'] . "_collaborator " . $repo . ":" . $collaborator['login'] . "\n"; ?>
     <?php } ?>
 <?php } ?>
 

@@ -15,6 +15,4 @@
     has_downloads      = <?= json_encode($repo['has_downloads']) ?>
 
     }
-    <?php echo "repo import command is: terraform import github_repository." . $repo['name'] . " " .
-        $repo['name'] . "\n"; ?>
 <?php } ?>
