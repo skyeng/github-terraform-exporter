@@ -2,7 +2,7 @@
 <?php
 require 'vendor/autoload.php';
 
-$token = '4060ce94006960df90488c5679df073ddc5d8eb0';
+$token = '';
 $org = "skyeng";
 
 $client = new \Github\Client();
