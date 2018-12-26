@@ -1,6 +1,6 @@
 <?php echo "============== Repos list ============== " ?>
 
-<?php foreach ($repos as $repo) { ?>
+<?php foreach ($org_repositories as $repo) { ?>
     resource "github_repository" "<?= $repo['name'] ?>" {
     name               = "<?= $repo['name'] ?>"
 
