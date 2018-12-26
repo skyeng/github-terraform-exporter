@@ -87,11 +87,11 @@ $team_members = array();
 /**
  * These two foreach will not work without the following hack in vendor/knplabs/github-api/lib/Github/Api/Organization/Teams.php
  *     public function members($team, $role)
-        {
-        $params['role'] = $role;
-        return $this->get('/teams/'.rawurlencode($team).'/members', $params);
-        //        return $this->get('/teams/'.rawurlencode($team).'/members');
-        }
+ * {
+ * $params['role'] = $role;
+ * return $this->get('/teams/'.rawurlencode($team).'/members', $params);
+ * //        return $this->get('/teams/'.rawurlencode($team).'/members');
+ * }
  * I've done it as members method doesn't support role filters: https://developer.github.com/v3/teams/members/#list-team-members
  */
 foreach ($org_teams as $team) {
@@ -152,6 +152,18 @@ foreach ($org_user_admins as $admin) {
 foreach ($org_user_members as $user) {
     echo "terraform import github_membership.membership_for_" . $user['login'] . " " .
         $org . ":" . $user['login'] . "\n";
+}
+
+foreach ($org_team_members as $team => $users) {
+    foreach ($users as $user) {
+        echo "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+    }
+}
+
+foreach ($team_maintainers as $team => $users) {
+    foreach ($users as $user) {
+        echo "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+    }
 }
 
 require_once 'templates/repos.php';
