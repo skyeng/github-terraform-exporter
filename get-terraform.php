@@ -2,7 +2,7 @@
 <?php
 require 'vendor/autoload.php';
 
-$token = '';
+$token = '4060ce94006960df90488c5679df073ddc5d8eb0';
 $org = "skyeng";
 
 $client = new \Github\Client();
@@ -116,6 +116,17 @@ foreach ($org_teams as $team) {
     $team_maintainers = array();
 }
 
+//minify/cleanup $org_team_members
+$tmp_team_members = array();
+foreach ($org_team_members as $team => $users) {
+    foreach ($users as $user) {
+        array_push($tmp_team_members, $user['login']);
+    }
+    $team_members[$team] = $tmp_team_members;
+    $tmp_team_members = array();
+
+}
+
 //minify/cleanup $org_team_maintainers
 $tmp_team_members = array();
 foreach ($org_team_maintainers as $team => $users) {
@@ -154,7 +165,7 @@ foreach ($org_user_members as $user) {
         $org . ":" . $user['login'] . "\n";
 }
 
-foreach ($org_team_members as $team => $users) {
+foreach ($team_members as $team => $users) {
     foreach ($users as $user) {
         echo "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
     }
