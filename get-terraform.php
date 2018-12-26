@@ -22,8 +22,8 @@ $client->authenticate($token, null, Github\Client::AUTH_HTTP_TOKEN);
  */
 
 $paginator = new Github\ResultPager($client);
-$org_repos_requst_parameters = array($org);
-$org_repositories = $paginator->fetchAll($client->api('organization'), 'repositories', $org_repos_requst_parameters);
+$org_repos_request_parameters = array($org);
+$org_repositories = $paginator->fetchAll($client->api('organization'), 'repositories', $org_repos_request_parameters);
 
 /**
  * github_membership:
@@ -71,7 +71,8 @@ foreach ($org_repositories as $repo) {
 $team_repositories = array();
 $team_repositories_with_permission = array();
 foreach ($org_teams as $team) {
-    foreach ($paginator->fetchAll($client->api('teams'), 'repositories', $team['id']) as $rep) {
+    $parameters = array($team['id']);
+    foreach ($paginator->fetchAll($client->api('teams'), 'repositories', $parameters) as $rep) {
         $team_repositories_with_permission += array($rep['name'] => $rep['permissions']);
         echo "terraform import github_team_repository.team_" . $team['slug'] .
             "_repo_" . $rep['name'] . " " . $team['id'] . ":" . $rep['name'] . "\n";
