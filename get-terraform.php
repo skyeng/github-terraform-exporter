@@ -139,42 +139,51 @@ foreach ($org_team_maintainers as $team => $users) {
 
 }
 
+$file = '/home/rmamaev/workspace/github-terraform-exporter/tf-commands.txt';
+
 foreach ($org_teams as $team) {
-    echo "terraform import github_team.team_" . $team['slug'] . " " .
+    $command = "terraform import github_team.team_" . $team['slug'] . " " .
         $team['id'] . "\n";
+    file_put_contents($file, $command, FILE_APPEND);
 }
 
 foreach ($org_repositories as $repo) {
-    echo "terraform import github_repository." . $repo['name'] . " " .
+    $command = "terraform import github_repository." . $repo['name'] . " " .
         $repo['name'] . "\n";
+    file_put_contents($file, $command, FILE_APPEND);
 }
 
 foreach ($collaborators_in_repo as $repo => $value) {
     foreach ($value as $collaborator) {
-        echo "terraform import github_repository_collaborator." . $repo . "_" .
+        $command = "terraform import github_repository_collaborator." . $repo . "_" .
             $collaborator['login'] . "_collaborator " . $repo . ":" . $collaborator['login'] . "\n";
+        file_put_contents($file, $command, FILE_APPEND);
     }
 }
 
 foreach ($org_user_admins as $admin) {
-    echo "terraform import github_membership.membership_for_" . $admin['login'] . " " .
+    $command = "terraform import github_membership.membership_for_" . $admin['login'] . " " .
         $org . ":" . $admin['login'] . "\n";
+    file_put_contents($file, $command, FILE_APPEND);
 }
 
 foreach ($org_user_members as $user) {
-    echo "terraform import github_membership.membership_for_" . $user['login'] . " " .
+    $command = "terraform import github_membership.membership_for_" . $user['login'] . " " .
         $org . ":" . $user['login'] . "\n";
+    file_put_contents($file, $command, FILE_APPEND);
 }
 
 foreach ($team_members as $team => $users) {
     foreach ($users as $user) {
-        echo "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+        $command = "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+        file_put_contents($file, $command, FILE_APPEND);
     }
 }
 
 foreach ($team_maintainers as $team => $users) {
     foreach ($users as $user) {
-        echo "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+        $command = "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+        file_put_contents($file, $command, FILE_APPEND);
     }
 }
 
