@@ -2,7 +2,7 @@
 
 <?php
 foreach ($team_members as $team => $users) {
-    foreach ($users as $member) { ?>?>
+    foreach ($users as $member) { ?>
         resource "github_team_membership" "team_<?= $team ?>_<?= $member ?>_membership" {
         team_id  = "${github_team.team_<?= $team ?>.id}"
         username = "<?= $member ?>"
