@@ -2,8 +2,10 @@
 
 <?php foreach ($org_repositories as $repo) { ?>
     resource "github_repository" "<?= $repo['name'] ?>" {
-    name               = "<?= $repo['name'] . "\n" ?>"
-    description        = "<?= $repo['description'] . "\n" ?>"
+    name               = "<?= $repo['name'] ?>"
+
+    description        = "<?= $repo['description'] ?>"
+
     has_projects       = <?= json_encode($repo['has_projects']) ?>
 
     has_wiki           = <?= json_encode($repo['has_wiki']) ?>
