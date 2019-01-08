@@ -117,28 +117,6 @@ foreach ($org_teams as $team) {
     $team_maintainers = array();
 }
 
-////minify/cleanup $org_team_members
-//$tmp_team_members = array();
-//foreach ($org_team_members as $team => $users) {
-//    foreach ($users as $user) {
-//        array_push($tmp_team_members, $user['login']);
-//    }
-//    $team_members[$team] = $tmp_team_members;
-//    $tmp_team_members = array();
-//
-//}
-//
-////minify/cleanup $org_team_maintainers
-//$tmp_team_members = array();
-//foreach ($org_team_maintainers as $team => $users) {
-//    foreach ($users as $user) {
-//        array_push($tmp_team_members, $user['login']);
-//    }
-//    $team_maintainers[$team] = $tmp_team_members;
-//    $tmp_team_members = array();
-//
-//}
-
 $file = '/home/rmamaev/workspace/github-terraform-exporter/tf-commands.txt';
 
 foreach ($org_teams as $team) {
