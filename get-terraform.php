@@ -98,7 +98,7 @@ $team_members = array();
 foreach ($org_teams as $team) {
     try {
         $parameters = array($team['id'], 'member');
-        $team_members += $paginator_preview->fetchAll($client_preview->api('teams'), 'members', $parameters);
+        $team_members += $paginator->fetchAll($client->api('teams'), 'members', $parameters);
     } catch (\Github\Exception\RuntimeException $exception) {
 //            echo $user['login'] . " not in a " . $team['name'] . "\n";
     }
@@ -109,7 +109,7 @@ foreach ($org_teams as $team) {
 foreach ($org_teams as $team) {
     try {
         $parameters = array($team['id'], 'maintainer');
-        $team_maintainers = $paginator_preview->fetchAll($client_preview->api('teams'), 'members', $parameters);
+        $team_maintainers = $paginator->fetchAll($client->api('teams'), 'members', $parameters);
     } catch (\Github\Exception\RuntimeException $exception) {
 //            echo $user['login'] . " not in a " . $team['name'] . "\n";
     }
@@ -117,27 +117,27 @@ foreach ($org_teams as $team) {
     $team_maintainers = array();
 }
 
-//minify/cleanup $org_team_members
-$tmp_team_members = array();
-foreach ($org_team_members as $team => $users) {
-    foreach ($users as $user) {
-        array_push($tmp_team_members, $user['login']);
-    }
-    $team_members[$team] = $tmp_team_members;
-    $tmp_team_members = array();
-
-}
-
-//minify/cleanup $org_team_maintainers
-$tmp_team_members = array();
-foreach ($org_team_maintainers as $team => $users) {
-    foreach ($users as $user) {
-        array_push($tmp_team_members, $user['login']);
-    }
-    $team_maintainers[$team] = $tmp_team_members;
-    $tmp_team_members = array();
-
-}
+////minify/cleanup $org_team_members
+//$tmp_team_members = array();
+//foreach ($org_team_members as $team => $users) {
+//    foreach ($users as $user) {
+//        array_push($tmp_team_members, $user['login']);
+//    }
+//    $team_members[$team] = $tmp_team_members;
+//    $tmp_team_members = array();
+//
+//}
+//
+////minify/cleanup $org_team_maintainers
+//$tmp_team_members = array();
+//foreach ($org_team_maintainers as $team => $users) {
+//    foreach ($users as $user) {
+//        array_push($tmp_team_members, $user['login']);
+//    }
+//    $team_maintainers[$team] = $tmp_team_members;
+//    $tmp_team_members = array();
+//
+//}
 
 $file = '/home/rmamaev/workspace/github-terraform-exporter/tf-commands.txt';
 
