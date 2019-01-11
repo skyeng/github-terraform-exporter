@@ -59,7 +59,7 @@ $org_teams = $paginator_preview->fetchAll($client_preview->api('teams'), 'all', 
 $collaborators_in_repo = array();
 $collaborator_api = $client->repositories()->collaborators();
 foreach ($org_repositories as $repo) {
-    $parameters = array($org, $repo['name'], array("affiliation" => "outside"));
+    $parameters = array($org, $repo['name'], array("affiliation" => "direct"));
     $collaborators_in_repo[$repo['name']] = $paginator->fetchAll($collaborator_api, 'all', $parameters);
 }
 
