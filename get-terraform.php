@@ -56,10 +56,12 @@ $org_teams = $paginator_preview->fetchAll($client_preview->api('teams'), 'all', 
  * username
  * permission
  */
-//$collaborators_in_repo = array();
-//foreach ($org_repositories as $repo) {
-//    $collaborators_in_repo[$repo['name']] = $client->repositories()->collaborators()->all($org, $repo['name']);
-//}
+$collaborators_in_repo = array();
+$collaborator_api = $client->repositories()->collaborators();
+foreach ($org_repositories as $repo) {
+    $parameters = array($org, $repo['name'], array("affiliation" => "outside"));
+    $collaborators_in_repo[$repo['name']] = $paginator->fetchAll($collaborator_api, 'all', $parameters);
+}
 
 /**
  * github_team_repository:
@@ -131,13 +133,13 @@ foreach ($org_repositories as $repo) {
     file_put_contents($file, $command, FILE_APPEND);
 }
 
-//foreach ($collaborators_in_repo as $repo => $value) {
-//    foreach ($value as $collaborator) {
-//        $command = "terraform import github_repository_collaborator." . $repo . "_" .
-//            $collaborator['login'] . "_collaborator " . $repo . ":" . $collaborator['login'] . "\n";
-//        file_put_contents($file, $command, FILE_APPEND);
-//    }
-//}
+foreach ($collaborators_in_repo as $repo => $value) {
+    foreach ($value as $collaborator) {
+        $command = "terraform import github_repository_collaborator." . $repo . "_" .
+            $collaborator['login'] . "_collaborator " . $repo . ":" . $collaborator['login'] . "\n";
+        file_put_contents($file, $command, FILE_APPEND);
+    }
+}
 
 foreach ($org_user_admins as $admin) {
     $command = "terraform import github_membership.membership_for_" . $admin['login'] . " " .
@@ -166,7 +168,7 @@ foreach ($team_maintainers as $team => $users) {
 }
 
 require_once 'templates/repos.php';
-//require_once 'templates/repo-collaborators.php';
+require_once 'templates/repo-collaborators.php';
 require_once 'templates/org-users.php';
 require_once 'templates/teams.php';
 require_once 'templates/team-members.php';
