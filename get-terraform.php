@@ -50,6 +50,17 @@ $paginator_preview = new Github\ResultPager($client_preview);
 $parameters = array($org);
 $org_teams = $paginator_preview->fetchAll($client_preview->api('teams'), 'all', $parameters);
 
+
+// Topic for a repository
+$repo_topics = array();
+foreach ($org_repositories as $repo) {
+    $parameters = array($org, $repo['name']);
+    foreach ($paginator_preview->fetchAll($client_preview->api('repositories'), 'topics', $parameters) as $topic) {
+        $repo_topics[$repo['name']] = $topic;
+    }
+}
+
+
 /**
  * github_repository_collaborator
  * repository

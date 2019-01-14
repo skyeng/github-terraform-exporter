@@ -6,6 +6,8 @@
 
     description        = "<?= $repo['description'] ?>"
 
+    homepage_url       = <?= $repo['homepage'] ?>
+
     has_projects       = <?= json_encode($repo['has_projects']) ?>
 
     has_wiki           = <?= json_encode($repo['has_wiki']) ?>
@@ -14,5 +16,10 @@
 
     has_downloads      = <?= json_encode($repo['has_downloads']) ?>
 
+    private            = <?= json_encode($repo['private']) ?>
+
+    archived           = <?= json_encode($repo['archived']) ?>
+
+    topics             = [  <?= implode(",", $repo_topics[$repo['name']]) ?> ]
     }
 <?php } ?>
