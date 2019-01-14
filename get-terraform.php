@@ -51,7 +51,7 @@ $parameters = array($org);
 $org_teams = $paginator_preview->fetchAll($client_preview->api('teams'), 'all', $parameters);
 
 
-// Topic for a repository
+// Topics for a repository
 $repo_topics = array();
 foreach ($org_repositories as $repo) {
     $parameters = array($org, $repo['name']);
@@ -59,8 +59,27 @@ foreach ($org_repositories as $repo) {
         $repo_topics[$repo['name']] = $topic;
     }
 }
+/*
+ * To get protected branches I have modified Repo\brances() method
+ *     public function branches($username, $repository, $branch = null, array $params = [])
+    {
+        $url = '/repos/'.rawurlencode($username).'/'.rawurlencode($repository).'/branches';
+        if (null !== $branch) {
+            $url .= '/'.rawurlencode($branch);
+        }
 
+        return $this->get($url, $params);
+    }
+ */
+// TODO: add these data to repo template
+$protected_branches = array();
+foreach ($org_repositories as $repo) {
+    $parameters = array($org, $repo['name'], null, array("protected" => "true"));
+    $protected_branches[$repo['name']] = $paginator->fetchAll($client->api('repositories'), 'branches', $parameters);
+}
 
+// TODO: add github branch protection. See https://www.terraform.io/docs/providers/github/r/branch_protection.html
+// TODO: add webhooks for a repo: https://www.terraform.io/docs/providers/github/r/repository_webhook.html
 /**
  * github_repository_collaborator
  * repository
@@ -99,14 +118,16 @@ $org_team_maintainers = array();
 $team_maintainers = array();
 $team_members = array();
 /**
- * These two foreach will not work without the following hack in vendor/knplabs/github-api/lib/Github/Api/Organization/Teams.php
+ * These two foreach will not work without the following hack in
+ * vendor/knplabs/github-api/lib/Github/Api/Organization/Teams.php
  *     public function members($team, $role)
  * {
  * $params['role'] = $role;
  * return $this->get('/teams/'.rawurlencode($team).'/members', $params);
  * //        return $this->get('/teams/'.rawurlencode($team).'/members');
  * }
- * I've done it as members method doesn't support role filters: https://developer.github.com/v3/teams/members/#list-team-members
+ * I've done it as members method
+ * doesn't support role filters: https://developer.github.com/v3/teams/members/#list-team-members
  */
 foreach ($org_teams as $team) {
     try {
