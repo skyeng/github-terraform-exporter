@@ -70,6 +70,15 @@ foreach ($org_repositories as $repo) {
         $repo_topics[$repo['name']] = $topic;
     }
 }
+
+$repo_topics_as_str = array();
+foreach ($repo_topics as $repo => $value) {
+    $topics_as_a_string = "";
+    foreach ($value as $topics) {
+        $topics_as_a_string = $topics_as_a_string . "\"," . $topics;
+    }
+    $repo_topics_as_str[$repo] = $topics_as_a_string;
+}
 /*
  * To get protected branches I have modified Repo\brances() method
  *     public function branches($username, $repository, $branch = null, array $params = [])
@@ -83,11 +92,11 @@ foreach ($org_repositories as $repo) {
     }
  */
 // TODO: add these data to repo template
-$protected_branches = array();
-foreach ($org_repositories as $repo) {
-    $parameters = array($org, $repo['name'], null, array("protected" => "true"));
-    $protected_branches[$repo['name']] = $paginator->fetchAll($client->api('repositories'), 'branches', $parameters);
-}
+//$protected_branches = array();
+//foreach ($org_repositories as $repo) {
+//    $parameters = array($org, $repo['name'], null, array("protected" => "true"));
+//    $protected_branches[$repo['name']] = $paginator->fetchAll($client->api('repositories'), 'branches', $parameters);
+//}
 
 // TODO: add github branch protection. See https://www.terraform.io/docs/providers/github/r/branch_protection.html
 // TODO: add webhooks for a repo: https://www.terraform.io/docs/providers/github/r/repository_webhook.html
@@ -215,3 +224,4 @@ require_once 'templates/repo-collaborators.php';
 require_once 'templates/org-users.php';
 require_once 'templates/teams.php';
 require_once 'templates/team-members.php';
+

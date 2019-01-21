@@ -6,7 +6,11 @@
 
     description        = "<?= $repo['description'] ?>"
 
-    homepage_url       = <?= $repo['homepage'] ?>
+    <?php if ($repo['homepage'] === "") { ?>
+    homepage_url       = ""
+    <?php } else { ?>
+    homepage_url       = "<?= $repo['homepage'] ?>"
+    <?php } ?>
 
     has_projects       = <?= json_encode($repo['has_projects']) ?>
 
@@ -20,7 +24,7 @@
 
     archived           = <?= json_encode($repo['archived']) ?>
 
-    topics             = [  <?= implode(",", $repo_topics[$repo['name']]) ?> ]
+    topics             = [  <?= $repo_topics_as_str[$repo['name']] ?> ]
     }
 <?php } ?>
 
@@ -28,6 +32,6 @@
 <?php
 foreach ($org_repositories as $repo) { ?>
     output "repo_<?= $repo['name'] ?>_name" {
-    value = "${github_team.<?= $repo['name'] ?>.name}"
+    value = "${github_repository.<?= $repo['name'] ?>.name}"
     }
 <?php } ?>
