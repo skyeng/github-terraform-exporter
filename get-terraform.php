@@ -35,6 +35,17 @@ $org_user_members = $paginator->fetchAll($client->api('members'), 'all', $org_us
 $org_user_admins_parameters = array($org, null, 'all', 'admin');
 $org_user_admins = $paginator->fetchAll($client->api('members'), 'all', $org_user_admins_parameters);
 
+// I need these data to populate users list in users/vars.tf
+$github_user_logins = "";
+foreach ($org_user_members as $github_user) {
+    $github_user_logins = $github_user_logins . "\"" . $github_user['login'] . "\", ";
+}
+
+$github_admin_logins = "";
+foreach ($org_user_admins as $github_user) {
+    $github_admin_logins = $github_admin_logins . "\"" . $github_user['login'] . "\", ";
+}
+
 /**
  * github_team:
  * name
@@ -151,7 +162,7 @@ foreach ($org_teams as $team) {
     $team_maintainers = array();
 }
 
-$file = '/home/rmamaev/workspace/github-terraform-exporter/tf-commands.txt';
+$file = '/home/ruslan.mamaev/workspace/github-terraform-exporter/tf-commands.txt';
 
 foreach ($org_teams as $team) {
     $command = "terraform import github_team.team_" . $team['slug'] . " " .

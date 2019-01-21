@@ -23,3 +23,11 @@
     topics             = [  <?= implode(",", $repo_topics[$repo['name']]) ?> ]
     }
 <?php } ?>
+
+<?php echo "============== repository outputs ============== " ?>
+<?php
+foreach ($org_repositories as $repo) { ?>
+    output "repo_<?= $repo['name'] ?>_name" {
+    value = "${github_team.<?= $repo['name'] ?>.name}"
+    }
+<?php } ?>
