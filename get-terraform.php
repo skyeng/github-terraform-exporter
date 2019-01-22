@@ -135,6 +135,8 @@ foreach ($org_teams as $team) {
 
 $org_team_members = array();
 $org_team_maintainers = array();
+$org_team_members_ids = array();
+$org_team_maintainers_ids = array();
 $team_maintainers = array();
 $team_members = array();
 /**
@@ -157,6 +159,7 @@ foreach ($org_teams as $team) {
 //            echo $user['login'] . " not in a " . $team['name'] . "\n";
     }
     $org_team_members[$team['slug']] = $team_members;
+    $org_team_members_ids[$team['id']] = $team_members;
     $team_members = array();
 }
 
@@ -168,6 +171,7 @@ foreach ($org_teams as $team) {
 //            echo $user['login'] . " not in a " . $team['name'] . "\n";
     }
     $org_team_maintainers[$team['slug']] = $team_maintainers;
+    $org_team_maintainers_ids[$team['id']] = $team_maintainers;
     $team_maintainers = array();
 }
 
@@ -205,16 +209,16 @@ foreach ($org_user_members as $user) {
     file_put_contents($file, $command, FILE_APPEND);
 }
 
-foreach ($team_members as $team => $users) {
+foreach ($org_team_members_ids as $team => $users) {
     foreach ($users as $user) {
-        $command = "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+        $command = "terraform import github_team_membership.member " . $team . ":" . $user['login'] . "\n";
         file_put_contents($file, $command, FILE_APPEND);
     }
 }
 
-foreach ($team_maintainers as $team => $users) {
+foreach ($org_team_maintainers_ids as $team => $users) {
     foreach ($users as $user) {
-        $command = "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+        $command = "terraform import github_team_membership.member " . $team . ":" . $user['login'] . "\n";
         file_put_contents($file, $command, FILE_APPEND);
     }
 }
