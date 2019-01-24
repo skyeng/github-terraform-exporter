@@ -122,6 +122,7 @@ foreach ($org_repositories as $repo) {
 
 $team_repositories = array();
 $team_repositories_with_permission = array();
+$org_team_ids = array();
 foreach ($org_teams as $team) {
     $parameters = array($team['id']);
     foreach ($paginator->fetchAll($client->api('teams'), 'repositories', $parameters) as $rep) {
@@ -131,6 +132,7 @@ foreach ($org_teams as $team) {
     }
     $team_repositories[$team['slug']] = $team_repositories_with_permission;
     $team_repositories_with_permission = array();
+    $org_team_ids[$team['slug']] = $team['id'];
 }
 
 $org_team_members = array();
@@ -159,7 +161,6 @@ foreach ($org_teams as $team) {
 //            echo $user['login'] . " not in a " . $team['name'] . "\n";
     }
     $org_team_members[$team['slug']] = $team_members;
-    $org_team_members_ids[$team['id']] = $team_members;
     $team_members = array();
 }
 
@@ -171,7 +172,6 @@ foreach ($org_teams as $team) {
 //            echo $user['login'] . " not in a " . $team['name'] . "\n";
     }
     $org_team_maintainers[$team['slug']] = $team_maintainers;
-    $org_team_maintainers_ids[$team['id']] = $team_maintainers;
     $team_maintainers = array();
 }
 
@@ -209,16 +209,18 @@ foreach ($org_user_members as $user) {
     file_put_contents($file, $command, FILE_APPEND);
 }
 
-foreach ($org_team_members_ids as $team => $users) {
+foreach ($org_team_members as $team => $users) {
     foreach ($users as $user) {
-        $command = "terraform import github_team_membership.member " . $team . ":" . $user['login'] . "\n";
+        $command = "terraform import github_team_membership.team_" . $team . "_" . $user['login'] . "_membership" .
+                                                             " " . $org_team_ids[$team] . ":" . $user['login'] . "\n";
         file_put_contents($file, $command, FILE_APPEND);
     }
 }
 
-foreach ($org_team_maintainers_ids as $team => $users) {
+foreach ($org_team_maintainers as $team => $users) {
     foreach ($users as $user) {
-        $command = "terraform import github_team_membership.member " . $team . ":" . $user['login'] . "\n";
+        $command = "terraform import github_team_membership.team_" . $team . "_" . $user['login'] . "_membership" .
+                                                            " " . $org_team_ids[$team] . ":" . $user['login'] . "\n";
         file_put_contents($file, $command, FILE_APPEND);
     }
 }
