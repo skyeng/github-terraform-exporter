@@ -35,6 +35,17 @@ $org_user_members = $paginator->fetchAll($client->api('members'), 'all', $org_us
 $org_user_admins_parameters = array($org, null, 'all', 'admin');
 $org_user_admins = $paginator->fetchAll($client->api('members'), 'all', $org_user_admins_parameters);
 
+// I need these data to populate users list in users/vars.tf
+$github_user_logins = "";
+foreach ($org_user_members as $github_user) {
+    $github_user_logins = $github_user_logins . "\"" . $github_user['login'] . "\", ";
+}
+
+$github_admin_logins = "";
+foreach ($org_user_admins as $github_user) {
+    $github_admin_logins = $github_admin_logins . "\"" . $github_user['login'] . "\", ";
+}
+
 /**
  * github_team:
  * name
@@ -59,6 +70,15 @@ foreach ($org_repositories as $repo) {
         $repo_topics[$repo['name']] = $topic;
     }
 }
+
+$repo_topics_as_str = array();
+foreach ($repo_topics as $repo => $value) {
+    $topics_as_a_string = "";
+    foreach ($value as $topics) {
+        $topics_as_a_string = $topics_as_a_string . "\"," . $topics;
+    }
+    $repo_topics_as_str[$repo] = $topics_as_a_string;
+}
 /*
  * To get protected branches I have modified Repo\brances() method
  *     public function branches($username, $repository, $branch = null, array $params = [])
@@ -72,11 +92,11 @@ foreach ($org_repositories as $repo) {
     }
  */
 // TODO: add these data to repo template
-$protected_branches = array();
-foreach ($org_repositories as $repo) {
-    $parameters = array($org, $repo['name'], null, array("protected" => "true"));
-    $protected_branches[$repo['name']] = $paginator->fetchAll($client->api('repositories'), 'branches', $parameters);
-}
+//$protected_branches = array();
+//foreach ($org_repositories as $repo) {
+//    $parameters = array($org, $repo['name'], null, array("protected" => "true"));
+//    $protected_branches[$repo['name']] = $paginator->fetchAll($client->api('repositories'), 'branches', $parameters);
+//}
 
 // TODO: add github branch protection. See https://www.terraform.io/docs/providers/github/r/branch_protection.html
 // TODO: add webhooks for a repo: https://www.terraform.io/docs/providers/github/r/repository_webhook.html
@@ -102,6 +122,7 @@ foreach ($org_repositories as $repo) {
 
 $team_repositories = array();
 $team_repositories_with_permission = array();
+$org_team_ids = array();
 foreach ($org_teams as $team) {
     $parameters = array($team['id']);
     foreach ($paginator->fetchAll($client->api('teams'), 'repositories', $parameters) as $rep) {
@@ -111,10 +132,13 @@ foreach ($org_teams as $team) {
     }
     $team_repositories[$team['slug']] = $team_repositories_with_permission;
     $team_repositories_with_permission = array();
+    $org_team_ids[$team['slug']] = $team['id'];
 }
 
 $org_team_members = array();
 $org_team_maintainers = array();
+$org_team_members_ids = array();
+$org_team_maintainers_ids = array();
 $team_maintainers = array();
 $team_members = array();
 /**
@@ -151,7 +175,7 @@ foreach ($org_teams as $team) {
     $team_maintainers = array();
 }
 
-$file = '/home/rmamaev/workspace/github-terraform-exporter/tf-commands.txt';
+$file = '/home/ruslan.mamaev/workspace/github-terraform-exporter/tf-commands.txt';
 
 foreach ($org_teams as $team) {
     $command = "terraform import github_team.team_" . $team['slug'] . " " .
@@ -185,16 +209,18 @@ foreach ($org_user_members as $user) {
     file_put_contents($file, $command, FILE_APPEND);
 }
 
-foreach ($team_members as $team => $users) {
+foreach ($org_team_members as $team => $users) {
     foreach ($users as $user) {
-        $command = "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+        $command = "terraform import github_team_membership.team_" . $team . "_" . $user['login'] . "_membership" .
+                                                             " " . $org_team_ids[$team] . ":" . $user['login'] . "\n";
         file_put_contents($file, $command, FILE_APPEND);
     }
 }
 
-foreach ($team_maintainers as $team => $users) {
+foreach ($org_team_maintainers as $team => $users) {
     foreach ($users as $user) {
-        $command = "terraform import github_team_membership.member " . $team . ":" . $user . "\n";
+        $command = "terraform import github_team_membership.team_" . $team . "_" . $user['login'] . "_membership" .
+                                                            " " . $org_team_ids[$team] . ":" . $user['login'] . "\n";
         file_put_contents($file, $command, FILE_APPEND);
     }
 }
@@ -204,3 +230,4 @@ require_once 'templates/repo-collaborators.php';
 require_once 'templates/org-users.php';
 require_once 'templates/teams.php';
 require_once 'templates/team-members.php';
+

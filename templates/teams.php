@@ -34,3 +34,11 @@ foreach ($org_teams as $team) { ?>
         <?php } ?>
     <?php } ?>
 <?php } ?>
+
+<?php echo "============== Team outputs ============== " ?>
+<?php
+foreach ($org_teams as $team) { ?>
+    output "team_<?= $team['slug'] ?>_id" {
+    value = "${github_team.<?= $team['slug'] ?>.id}"
+    }
+<?php } ?>

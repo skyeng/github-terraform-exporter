@@ -21,6 +21,19 @@
     }
 <?php } ?>
 
+<?php echo "============== Users list short (for users/vars.tf) ============== " ?>
+variable "github_admins" {
+description = "List with admin users in GitHub Organization"
+type        = "list"
+default     = [<?php echo $github_admin_logins ?>]
+}
+
+variable "github_users" {
+description = "List with limited users in GitHub Organization"
+type        = "list"
+default     = [<?php echo $github_user_logins ?>]
+}
+
 <?php echo "============== Users outputs ============== " ?>
 <?php foreach ($org_user_members as $user) { ?>
     output "github_<?= $user['login'] ?>_username" {
